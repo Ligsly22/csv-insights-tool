@@ -2,8 +2,9 @@
 
 #1 L = load
 import streamlit as st
-
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 st.title("CSV insights tool")
 
@@ -41,7 +42,9 @@ if uploaded_file is not None:
     st.subheader("Visualize")
 
     if pd.api.types.is_numeric_dtype(df[column]):
-        st.bar_chart(df[column])
+        fig, ax = plt.subplots()
+        sns.histplot(df[column], ax=ax)
+        st.pyplot(fig)
     else:
         st.write("Chart not available for non-numeric columns.")
 
