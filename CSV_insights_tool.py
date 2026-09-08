@@ -5,6 +5,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import sqlite3
 
 st.title("CSV insights tool")
 
@@ -53,6 +54,14 @@ if uploaded_file is not None:
             st.pyplot(fig)
     else:
         st.write("Chart not available for non-numeric columns.")
+
+#D = Database
+    st.subheader("Save to Database")
+
+    conn = sqlite3.connect("data.db")
+    df.to_sql("uploaded_data", conn, if_exists="replace", index=False)
+    preview = pd.read_sql(f"SELECT * FROM uploaded_data ORDER BY {column} DESC LIMIT 10", conn)
+    st.write(preview)
 
 #E = Export
     st.subheader("Export")
