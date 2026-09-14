@@ -51,8 +51,11 @@ if uploaded_file is not None:
             st.bar_chart(counts)
         else:
             fig, ax = plt.subplots()
-            sns.histplot(df[column], ax=ax)
-            st.pyplot(fig)
+            if (df[column].dropna() > 0).all():
+                sns.histplot(df[column], ax=ax, log_scale=True)
+            else:
+                sns.histplot(df[column], ax=ax)
+            st.pyplot(fig) 
     else:
         st.write("Chart not available for non-numeric columns.")
 
@@ -62,7 +65,7 @@ if uploaded_file is not None:
 #Show top 10 in ranking based on category
     conn = sqlite3.connect("data.db")
     df.to_sql("uploaded_data", conn, if_exists="replace", index=False)
-    preview = pd.read_sql(f"SELECT * FROM uploaded_data ORDER BY {column} DESC LIMIT 10", conn)
+    preview = pd.read_sql(f'SELECT * FROM uploaded_data ORDER BY "{column}" DESC LIMIT 10', conn)
     st.write(preview)
 
 # Correlation
