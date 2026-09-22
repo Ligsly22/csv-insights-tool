@@ -13,7 +13,11 @@ st.title("CSV insights tool")
 uploaded_file = st.file_uploader("Upload a CSV file", type="csv")
 
 if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
+    try: 
+        df = pd.read_csv(uploaded_file)
+    except (pd.errors.EmptyDataError, pd.errors.ParserError):
+        st.error("Theres something fishy about that file.  Try a different one.")
+        st.stop()
 
     st.write("Dataset shape:", df.shape)
     st.write("Total missing values:", df.isnull().sum().sum())
@@ -29,7 +33,7 @@ if uploaded_file is not None:
     )
 
     if clean_option == "Drop rows with missing values":
-        df = df.dropna(subset=[column])
+        df = df.dropna()
     elif clean_option == "Fill missing values with 0":
         df = df.fillna(0)
     
